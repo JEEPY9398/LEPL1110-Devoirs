@@ -26,39 +26,39 @@ double integrate(double x[3], double y[3], double (*f) (double, double))
         I += w[i]*f(xLoc[i],yLoc[i])*J;
     }
 
-//
-// ... A modifier :-)
-//
-//
-// Pour dessiner l'element, les sommets du triangle :-)
-// Decommenter la ligne pour dessiner aussi les points d'integration
-//
-
   glfemSetColor(GLFEM_BLACK); glfemDrawElement(x,y,3);
   glfemSetColor(GLFEM_BLUE);  glfemDrawNodes(x,y,3);
   glfemSetColor(GLFEM_RED);   glfemDrawNodes(xLoc,yLoc,3);
-    
-
 
     return I;
 }
 
-double integrateRecursive(double x[3], double y[3], double (*f)(double,double), int n)
-{
+double integrateRecursive(double x[3], double y[3], double (*f)(double,double), int n) {
 
-//
-// ... A modifier :-)
-// y-compris la ligne juste en dessous :-)
-//
+    double I = 0.0;
+    int[4][3] triangle = {{0, 3, 5}, {3, 4, 5}, {3, 2, 4}, {5, 4, 1}};
+    double x_prim[6] = {0.0, 0.5, 1.0, 0.5, 0.0, 0.0};
+    double y_prim[6] = {0.0, 0.0, 0.0, 0.5, 1.0, 0.5};
+    double[3] e;
+    double[3] eta;
+    double[3] xLoc;
+    double[3] yLoc;
 
     if (n <= 0) {
         return integrate(x, y, f);
     } else {
 
-        return 0;
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 3; j++){
+                for (int i = 0; i < 3; ++i) {
+                    e[i] = x_prim[triangle[i][j]];
+                    eta[i] = y_prim[triangle[i][j]];
+                    xLoc[i] = (1 - e[i] - eta[i])*x[0] + e[i]*x[1] + eta[i]*x[2];
+                    yLoc[i] = (1 - e[i] - eta[i])*y[0] + e[i]*y[1] + eta[i]*y[2];
+                }
+            }
+            I += integrateRecursive(x, y, f, n-1);
+        }
+        return I;
     }
-    
-//
-//
-//
 }
