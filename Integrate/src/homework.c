@@ -21,7 +21,7 @@ double integrate(double x[3], double y[3], double (*f) (double, double))
         yLoc[i] = (1 - e[i] - n[i])*y[0] + e[i]*y[1] + n[i]*y[2];
     }
 
-    double I = 0;
+    double I = 0.0;
     for (int i = 0; i < 3; ++i) {
         I += w[i]*f(xLoc[i],yLoc[i])*J;
     }
@@ -36,13 +36,13 @@ double integrate(double x[3], double y[3], double (*f) (double, double))
 double integrateRecursive(double x[3], double y[3], double (*f)(double,double), int n) {
 
     double I = 0.0;
-    int[4][3] triangle = {{0, 3, 5}, {3, 4, 5}, {3, 2, 4}, {5, 4, 1}};
-    double x_prim[6] = {0.0, 0.5, 1.0, 0.5, 0.0, 0.0};
-    double y_prim[6] = {0.0, 0.0, 0.0, 0.5, 1.0, 0.5};
-    double[3] e;
-    double[3] eta;
-    double[3] xLoc;
-    double[3] yLoc;
+    int triangle[4][3] = {{0, 3, 5}, {3, 4, 5}, {3, 2, 4}, {5, 4, 1}};
+    double x_prim[6] = {0.0, 1.0, 0.0, 0.5, 0.5, 0.0};
+    double y_prim[6] = {0.0, 0.0, 1.0, 0.0, 0.5, 0.5};
+    double e[3];
+    double eta[3];
+    double xLoc[3];
+    double yLoc[3];
 
     if (n <= 0) {
         return integrate(x, y, f);
