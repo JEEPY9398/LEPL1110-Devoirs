@@ -11,6 +11,7 @@ double integrate(double x[3], double y[3], double (*f) (double, double))
     double e[3] = {1/6, 1/6, 2/3};
     double n[3] = {1/6, 2/3, 1/6};
     double w[3] = {1/6, 1/6, 1/6};
+
     double J = fabs((x[1] - x[0]) * (y[2] - y[0]) - (x[2] - x[0]) * (y[1] - y[0]));
 
     double xLoc[3];
@@ -49,11 +50,15 @@ double integrateRecursive(double x[3], double y[3], double (*f)(double,double), 
 // ... A modifier :-)
 // y-compris la ligne juste en dessous :-)
 //
-    double I = integrate(x,y,f);
+
+    if (n <= 0) {
+        return integrate(x, y, f);
+    } else {
+
+        return 0;
+    }
     
 //
 //
-//    
-     
-    return I;
+//
 }
