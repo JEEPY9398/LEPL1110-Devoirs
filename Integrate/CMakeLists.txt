@@ -11,7 +11,7 @@ include_directories(${OPENGL_INCLUDE_DIR})
 
 # GLFW
 add_subdirectory(glfw)
-include_directories(glfw/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/glfw/include)
 
 # link the aforementioned libraries
 add_executable(${EXEC_NAME} src/fem.c src/glfem.c src/homework.c src/main.c)
@@ -24,7 +24,7 @@ endif()
 
 # set exec as the startup project in visual studio
 if ( MSVC )
-    set_property(DIRECTORY . PROPERTY VS_STARTUP_PROJECT ${EXEC_NAME})
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${EXEC_NAME})
     target_compile_options(${EXEC_NAME} PRIVATE "/W2")
 endif()
 
