@@ -1,63 +1,62 @@
 // Siberdt Hugo
 // Sagdic Jean-Pierre
 
-#include <stdio.h>
-#include <math.h>
 #include "glfem.h"
 
 
 double integrate(double x[3], double y[3], double (*f) (double, double))
 {
-    double e[3] = {1/6, 1/6, 2/3};
-    double n[3] = {1/6, 2/3, 1/6};
-    double w[3] = {1/6, 1/6, 1/6};
-
-    double J = fabs((x[1] - x[0]) * (y[2] - y[0]) - (x[2] - x[0]) * (y[1] - y[0]));
-
+    double xi [3] = {1.0/6.0 ,2.0/3.0 ,1.0/6.0};
+    double eta [3] = {1.0/6.0 ,1.0/6.0 ,2.0/3.0};
+    double w [3] = {1.0/6.0 ,1.0/6.0 ,1.0/6.0};
     double xLoc[3];
     double yLoc[3];
-    for (int i = 0; i < 3; ++i) {
-        xLoc[i] = (1 - e[i] - n[i])*x[0] + e[i]*x[1] + n[i]*x[2];
-        yLoc[i] = (1 - e[i] - n[i])*y[0] + e[i]*y[1] + n[i]*y[2];
-    }
-
     double I = 0.0;
+
+    double J = (x[1] - x[0]) * (y[2] - y[0]) - (x[2] - x[0]) * (y[1] - y[0]);
+
     for (int i = 0; i < 3; ++i) {
-        I += w[i]*f(xLoc[i],yLoc[i])*J;
+        xLoc[i] =  x[0] * (1 - xi[i] - eta[i]) + eta[i] * x[1] + xi[i] * x[2];
+        yLoc[i] =  y[0] * (1 - xi[i] - eta[i]) + eta[i] * y[1] + xi[i] * y[2];
     }
 
-  glfemSetColor(GLFEM_BLACK); glfemDrawElement(x,y,3);
-  glfemSetColor(GLFEM_BLUE);  glfemDrawNodes(x,y,3);
-  glfemSetColor(GLFEM_RED);   glfemDrawNodes(xLoc,yLoc,3);
+    for (int i = 0; i < 3; ++i) {
+        I += w[i] * f(xLoc[i],yLoc[i]) * J;
+    }
 
-    return I;
+    glfemSetColor(GLFEM_BLACK); glfemDrawElement(x,y,3);
+    glfemSetColor(GLFEM_BLUE);  glfemDrawNodes(x,y,3);
+    glfemSetColor(GLFEM_RED);   glfemDrawNodes(xLoc,yLoc,3);
+
+    if(J > 0){
+        return I;
+    }
+    else{
+        return -I;
+    }
 }
 
 double integrateRecursive(double x[3], double y[3], double (*f)(double,double), int n) {
 
+    int triangles[4][3] = {{0 , 3 , 5} , {3 , 1 , 4} , {5 , 4 , 2} , {3 , 4 , 5}};
+    double xi[6] = {0.0 ,1.0 ,0.0 ,0.5 ,0.5 ,0.0};
+    double eta[6] = {0.0 ,0.0 ,1.0 ,0.0 ,0.5 ,0.5};
     double I = 0.0;
-    int triangle[4][3] = {{0, 3, 5}, {3, 4, 5}, {3, 2, 4}, {5, 4, 1}};
-    double x_prim[6] = {0.0, 1.0, 0.0, 0.5, 0.5, 0.0};
-    double y_prim[6] = {0.0, 0.0, 1.0, 0.0, 0.5, 0.5};
-    double e[3];
-    double eta[3];
     double xLoc[3];
     double yLoc[3];
 
     if (n <= 0) {
         return integrate(x, y, f);
-    } else {
-
+    }
+    else {
         for(int i = 0; i < 4; i++){
+
             for(int j = 0; j < 3; j++){
-                for (int i = 0; i < 3; ++i) {
-                    e[i] = x_prim[triangle[i][j]];
-                    eta[i] = y_prim[triangle[i][j]];
-                    xLoc[i] = (1 - e[i] - eta[i])*x[0] + e[i]*x[1] + eta[i]*x[2];
-                    yLoc[i] = (1 - e[i] - eta[i])*y[0] + e[i]*y[1] + eta[i]*y[2];
-                }
+                xLoc[j] =  x[0] * (1 - xi[triangles[i][j]] - eta[triangles[i][j]]) + eta[triangles[i][j]] * x[1] + xi[triangles[i][j]] * x[2];
+                yLoc[j] =  y[0] * (1 - xi[triangles[i][j]] - eta[triangles[i][j]]) + eta[triangles[i][j]] * y[1] + xi[triangles[i][j]] * y[2];
             }
-            I += integrateRecursive(x, y, f, n-1);
+
+            I += integrateRecursive(xLoc, yLoc, f, n-1);
         }
         return I;
     }
