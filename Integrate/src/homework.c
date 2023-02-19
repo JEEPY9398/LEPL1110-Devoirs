@@ -1,6 +1,8 @@
 // Siberdt Hugo
 // Sagdic Jean-Pierre
 
+// Sources: https://perso.uclouvain.be/vincent.legat/zouLab/epl1110.php?action=loginCheck (consulté le 18/02/2023)
+
 #include "glfem.h"
 
 
