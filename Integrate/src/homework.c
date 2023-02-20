@@ -23,19 +23,19 @@ double integrate(double x[3], double y[3], double (*f) (double, double))
     }
 
     for (int i = 0; i < 3; ++i) {
-        I += w[i] * f(xLoc[i],yLoc[i]) * J;
+        if(J > 0){
+            I += w[i] * f(xLoc[i],yLoc[i]) * J;
+        }
+        else{
+            I += w[i] * f(xLoc[i],yLoc[i]) * (-J);
+        }
     }
 
     glfemSetColor(GLFEM_BLACK); glfemDrawElement(x,y,3);
     glfemSetColor(GLFEM_BLUE);  glfemDrawNodes(x,y,3);
     glfemSetColor(GLFEM_RED);   glfemDrawNodes(xLoc,yLoc,3);
 
-    if(J > 0){
-        return I;
-    }
-    else{
-        return -I;
-    }
+    return I;
 }
 
 double integrateRecursive(double x[3], double y[3], double (*f)(double,double), int n) {

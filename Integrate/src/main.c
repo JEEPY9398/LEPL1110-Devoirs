@@ -17,6 +17,7 @@ int main(int argc, char* argv[])
 {
 
     char   theMessage[256];
+    char   theMessage2[256];
    
     double x[3] = { 0, 1, 0};
     double y[3] = { 0, 0, 1};
@@ -28,6 +29,18 @@ int main(int argc, char* argv[])
         double I = integrateRecursive(x,y,fun,2);
         sprintf(theMessage, "Integral = %14.7e",I); 
         glfemDrawMessage(theMessage,(double[2]){16.0, 30.0});
+
+        glfemWindowUpdate();
+    } while(!glfemWindowShouldClose());
+
+    
+    glfemWindowCreate("EPL1110 : Integrate",480,480,3,x,y);
+    do {
+        glfemReshape(x,y,3);
+
+        double I2 = integrateRecursive(x,y,stupid,2);
+        sprintf(theMessage2, "Integral = %14.7e",I2);
+        glfemDrawMessage(theMessage2,(double[2]){16.0, 30.0});
 
         glfemWindowUpdate();
     } while(!glfemWindowShouldClose());
